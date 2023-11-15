@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1046805719090",
+    "project_id": "achieve-c43a2",
+    "storage_bucket": "achieve-c43a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046805719090:android:0f8639924eb1a1405eb42b",
+        "android_client_info": {
+          "package_name": "com.example.training"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqvmiACZsbIu0gB4tXLon5isxepK9nQYQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
