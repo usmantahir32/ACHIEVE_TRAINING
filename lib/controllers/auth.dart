@@ -87,9 +87,11 @@ class AuthCont extends GetxController {
     try {
       isLoading.value = true;
       // await userss!.sendEmailVerification();
+
+      // await userss!.reauthenticateWithCredential(cred);
       await userss!.updateEmail(newEmail);
-      // Optionally, update the email in your user's Firestore document
-      await FirebaseFirestore.instance
+
+      await firestore
           .collection('Users')
           .doc(userss!.uid)
           .update({'email': newEmail});
@@ -105,20 +107,22 @@ class AuthCont extends GetxController {
 
 //UPDATE PASSWORD
   Future<void> updatePassword({oldPass, newPass}) async {
-    if (oldPass != newPass) {
-      showCustomSnackbar(true, "Passwords Doesnot Matched");
-    } else {
-      try {
-        isLoading.value = true;
-        var cred = EmailAuthProvider.credential(
-            email: userss!.email!, password: oldPass);
-        await userss!.reauthenticateWithCredential(cred);
-        await userss!.updatePassword(newPass);
-        isLoading.value = false;
-      } catch (e) {
-        isLoading.value = false;
-        Logger().t('Error updating password: ${e.toString()}');
-      }
+    try {
+      isLoading.value = true;
+      // var cred = EmailAuthProvider.credential(
+      //     email: userss!.email!, password: oldPass);
+      // await userss!.reauthenticateWithCredential(cred);
+      await userss!.updatePassword(newPass);
+
+      await firestore
+          .collection('Users')
+          .doc(userss!.uid)
+          .update({'Password': newPass});
+      showCustomSnackbar(false, "Password Changed Succesfully.");
+      isLoading.value = false;
+    } catch (e) {
+      isLoading.value = false;
+      Logger().t('Error updating password: ${e.toString()}');
     }
   }
 
@@ -126,9 +130,7 @@ class AuthCont extends GetxController {
   Future<void> signout() async {
     Get.back();
     final prefs = await SharedPreferences.getInstance();
-
     prefs.remove(LocalDB.userID);
-
     Get.offAll(() => const ChooseAuthScreen());
     userModel.value = UserModel();
     await firebaseAuth.signOut();
@@ -138,15 +140,8 @@ class AuthCont extends GetxController {
   Future<void> deleteAccount() async {
     try {
       isLoading.value = true;
-
-      Logger().t(userss!.uid);
-
-      Logger().t(userss);
       await firestore.collection('Users').doc(userss!.uid).delete();
-      Logger().t("user deleted from collection");
       await userss!.delete();
-      Logger().t("user auth deleted");
-
       Get.offAll(() => const ChooseAuthScreen());
       userModel.value = UserModel();
       final prefs = await SharedPreferences.getInstance();
@@ -156,6 +151,7 @@ class AuthCont extends GetxController {
     } catch (e) {
       isLoading.value = false;
       showCustomSnackbar(true, 'Something went wrong');
+      Logger().e(e.toString());
     }
   }
 

@@ -1,7 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-  String? id, name, email, fcmToken, photo, createdAt, password;
+  String? id,
+      name,
+      email,
+      fcmToken,
+      photo,
+      createdAt,
+      password,
+      phone,
+      gender,
+      age;
 
   //FOR NOTIFICATIONS
   bool? isSubscribed, isVerified, emailNotify, pushNotify;
@@ -20,6 +29,9 @@ class UserModel {
     this.paymentDate,
     this.fcmToken,
     this.id,
+    this.phone,
+    this.gender,
+    this.age,
     this.name,
   });
   UserModel.fromDocumentSnapshot(DocumentSnapshot doc) {
@@ -42,6 +54,9 @@ class UserModel {
     emailNotify = permissionsForNotify['Email'];
     pushNotify = permissionsForNotify['PushNotifications'];
     createdAt = doc['CreatedAt'].toString();
+    gender = doc['gender'];
+    age = doc['age'];
+    phone = doc['phone'];
     isVerified = doc['isVerified'];
     isSubscribed = doc['isSubscribed'];
   }

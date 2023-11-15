@@ -1,12 +1,13 @@
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:training/constants/controller.dart';
 import 'package:training/utils/size_config.dart';
 import 'package:training/utils/spacing.dart';
-import 'package:training/views/pages/auth/otp/otp.dart';
 import 'package:training/views/widgets/auth_textfield.dart';
 import 'package:training/views/widgets/custom_appbar.dart';
 import 'package:training/views/widgets/custom_button.dart';
+import 'package:training/views/widgets/custom_snackbar.dart';
 import '../../../../constants/colors.dart';
 
 class ChangePasswordScreen extends StatelessWidget {
@@ -66,8 +67,8 @@ class ChangePasswordScreen extends StatelessWidget {
               ),
             ),
             AuthTextField(
-              hintText: "New Password",
-              controller: newPass,
+              hintText: "Confirm Password",
+              controller: confirmPass,
               isPassword: true,
               prefix: Icon(
                 FeatherIcons.lock,
@@ -76,7 +77,25 @@ class ChangePasswordScreen extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            CustomButton(title: "Next", onTap: () {}),
+            Obx(
+              () => CustomButton(
+                  isLoading: authCont.isLoading.value,
+                  title: "Continue",
+                  onTap: () {
+                    if (oldPass.text.isEmpty ||
+                        newPass.text.isEmpty ||
+                        confirmPass.text.isEmpty) {
+                      showCustomSnackbar(true, "Plzz Fill All The Details.");
+                    } else if (newPass.text != confirmPass.text) {
+                      showCustomSnackbar(true, "Password Doesnot Matched.");
+                    } else if (newPass.text == oldPass.text) {
+                      showCustomSnackbar(true, "Password Cannot Be Same.");
+                    } else {
+                      authCont.updatePassword(
+                          oldPass: oldPass.text, newPass: newPass.text);
+                    }
+                  }),
+            ),
             Spacing.y(4)
           ],
         ),

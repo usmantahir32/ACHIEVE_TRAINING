@@ -14,7 +14,10 @@ class AuthService {
         'Photo': user.photo,
         "isSubscribed": false,
         "isVerified": false,
-        "PaymentDate": DateTime.now().add(Duration(days: 31)).toString(),
+        "gender": '',
+        "age": '',
+        "phone": '',
+        "PaymentDate": DateTime.now().add(const Duration(days: 31)).toString(),
         'Password': user.password,
         'AllowNotifyOrEmails': {"Email": true, "PushNotifications": true},
         'CreatedAt': FieldValue.serverTimestamp(),
@@ -24,28 +27,20 @@ class AuthService {
     }
   }
 
-  // static Future<void> updateUser(UserModel user) async {
-  //   try {
-  //     await firestore.collection('Users').doc(user.id).update({
-  //       'Name': user.name,
-  //       'Phone': user.phone ?? '',
-  //       'Photo': user.photo,
-  //       'searchKey': user.name!.toLowerCase(),
-  //       'EmployementData': {
-  //         'EmployeeID': user.employementData!.emplopyeeID!,
-  //         'Role': user.employementData?.role ?? '',
-  //         'hourlyRate': user.employementData?.hourlyRate ?? 50,
-  //         'Team': user.employementData?.team??"1",
-  //         'currency': user.employementData?.currency ?? '\$',
-  //         'Position': user.employementData?.position ?? '',
-  //         'tagColorIndex': user.employementData?.tagColorIndex ?? 0,
-  //         'Note': user.employementData?.note ?? '',
-  //       },
-  //     });
-  //   } catch (e) {
-  //     //print(e);
-  //   }
-  // }
+  static Future<void> updateUser(UserModel user) async {
+    try {
+      await firestore.collection('Users').doc(user.id).update({
+        'Name': user.name,
+        'phone': user.phone ?? '',
+        'gender': user.gender ?? '',
+        'age': user.age ?? '',
+        'Photo': user.photo,
+        'searchKey': user.name!.toLowerCase(),
+      });
+    } catch (e) {
+      //print(e);
+    }
+  }
 
   // static Future<void> doPremium(String whichPackage) async {
   //   try {

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:training/constants/colors.dart';
+import 'package:training/constants/controller.dart';
 import 'package:training/constants/icons.dart';
 import 'package:training/controllers/personal_info.dart';
 import 'package:training/views/pages/auth/change%20email/change_email.dart';
 import 'package:training/views/pages/personal%20info/components/text_field.dart';
 import 'package:training/views/widgets/age_picker.dart';
 import 'package:training/views/widgets/custom_appbar.dart';
+import 'package:training/views/widgets/custom_button.dart';
 import '../../../../utils/size_config.dart';
 import '../../../../utils/spacing.dart';
+import '../../widgets/confirmation_dialog.dart';
 
 class PersonalInfoScreen extends StatelessWidget {
   PersonalInfoScreen({super.key});
@@ -20,113 +23,131 @@ class PersonalInfoScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: const CustomAppbar(title: ""),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: SizeConfig.widthMultiplier * 4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Spacing.y(2),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  "Personal Info",
-                  style: textTheme.headlineLarge!.copyWith(
-                    fontSize: SizeConfig.textMultiplier * 3.2,
-                    color: AppColors.primaryClr,
-                  ),
+      body: Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: SizeConfig.widthMultiplier * 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Spacing.y(2),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Personal Info",
+                style: textTheme.headlineLarge!.copyWith(
+                  fontSize: SizeConfig.textMultiplier * 3.2,
+                  color: AppColors.primaryClr,
                 ),
               ),
-              Spacing.y(2),
-              Text(
-                "Name",
-                style:
-                    textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),
-              ),
-              Spacing.y(.5),
-              PersonalInfoTextField(
-                controller: cont.name,
-              ),
-              Text(
-                "Email",
-                style:
-                    textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),
-              ),
-              Spacing.y(.5),
-              PersonalInfoTextField(
-                controller: cont.email,
-                readOnly: true,
+            ),
+            Spacing.y(2),
+            Text(
+              "Name",
+              style: textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),
+            ),
+            Spacing.y(.5),
+            PersonalInfoTextField(
+              controller: cont.name,
+            ),
+            // Text(
+            //   "Email",
+            //   style:
+            //       textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),
+            // ),
+            // Spacing.y(.5),
+            // PersonalInfoTextField(
+            //   controller: cont.email,
+            //   readOnly: true,
+            //   onTap: () {
+            //     Get.to(() => ChangeEmailScreen(),
+            //         transition: Transition.rightToLeft);
+            //   },
+            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: SizeConfig.widthMultiplier * 44,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Gender",
+                        style: textTheme.bodySmall!
+                            .copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      Spacing.y(.5),
+                      PersonalInfoTextField(
+                        controller: cont.gender,
+                        readOnly: true,
+                        onTap: () {
+                          Get.bottomSheet(
+                            ChooseGenderBottomSheet(),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: SizeConfig.widthMultiplier * 44,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Age",
+                        style: textTheme.bodySmall!
+                            .copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      Spacing.y(.5),
+                      PersonalInfoTextField(
+                        controller: cont.age,
+                        readOnly: true,
+                        onTap: () {
+                          Get.bottomSheet(
+                            AgePickerBottomSheet(),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Text(
+              "Contact",
+              style: textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),
+            ),
+            Spacing.y(.5),
+            PersonalInfoTextField(
+              controller: cont.number,
+              keyboardType: TextInputType.phone,
+            ),
+            Spacing.y(38),
+            Obx(
+              () => CustomButton(
+                isLoading: authCont.isLoading.value,
+                title: "Update",
                 onTap: () {
-                  Get.to(() => ChangeEmailScreen(),
-                      transition: Transition.rightToLeft);
+                  Get.dialog(
+                    ConfirmationDialog(
+                      title: "Confirm Update?",
+                      height: SizeConfig.heightMultiplier * 43,
+                      subtitle:
+                          "Your account will reflect the new information once the changes are confirmed. Thank you for choosing us!",
+                      onContinue: () {
+                        Get.back();
+                        cont.updateUser();
+                      },
+                    ),
+                  );
                 },
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: SizeConfig.widthMultiplier * 44,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Gender",
-                          style: textTheme.bodySmall!
-                              .copyWith(fontWeight: FontWeight.w500),
-                        ),
-                        Spacing.y(.5),
-                        PersonalInfoTextField(
-                          controller: cont.gender,
-                          readOnly: true,
-                          onTap: () {
-                            Get.bottomSheet(
-                              ChooseGenderBottomSheet(),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: SizeConfig.widthMultiplier * 44,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Age",
-                          style: textTheme.bodySmall!
-                              .copyWith(fontWeight: FontWeight.w500),
-                        ),
-                        Spacing.y(.5),
-                        PersonalInfoTextField(
-                          controller: cont.age,
-                          readOnly: true,
-                          onTap: () {
-                            Get.bottomSheet(
-                              AgePickerBottomSheet(),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              Text(
-                "Contact",
-                style:
-                    textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),
-              ),
-              Spacing.y(.5),
-              PersonalInfoTextField(
-                controller: cont.number,
-                keyboardType: TextInputType.phone,
-              ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
